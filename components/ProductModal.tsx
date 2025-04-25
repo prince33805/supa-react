@@ -1,14 +1,31 @@
 'use client';
 
 import React from 'react';
+// import { Database } from '@/types/supabase';
+
+// type Product = Database['public']['Tables']['product']['Row'];
+
+type currentProduct = {
+  id: string | null;
+  name: string | null;
+  price: number | null;
+  cost: number | null;
+  attachments: string | null;
+  // add more fields as needed
+};
+
+type formState = {
+  success: boolean;
+  message: string | null;
+};
 
 interface ProductModalProps {
   isOpen: boolean;
   mode: 'create' | 'edit' | 'view' | null;
-  currentProduct: any;
+  currentProduct: currentProduct;
   onClose: () => void;
   onSubmit: (formData: FormData) => void;
-  formState: any;
+  formState: formState;
   imageState: {
     success: boolean;
     message: string;
@@ -59,7 +76,7 @@ export default function ProductModal({
         >
           <input type="hidden" name="mode" value={mode} />
           {mode === 'edit' && (
-            <input type="hidden" name="id" value={currentProduct.id} />
+            <input type="hidden" name="id" value={currentProduct.id ?? ''} />
           )}
 
           {/* Image Preview */}
@@ -67,7 +84,7 @@ export default function ProductModal({
             {mode === 'view' && currentProduct.attachments && (
               <img
                 src={currentProduct.attachments}
-                alt={currentProduct.name}
+                alt={currentProduct.name ?? undefined}
                 className="w-16 h-16 rounded-full object-cover border"
               />
             )}
@@ -82,7 +99,7 @@ export default function ProductModal({
                 ) : currentProduct.attachments ? (
                   <img
                     src={currentProduct.attachments}
-                    alt={currentProduct.name}
+                    alt={currentProduct.name ?? undefined}
                     className="w-16 h-16 rounded-full object-cover border"
                   />
                 ) : (
@@ -116,7 +133,7 @@ export default function ProductModal({
               <label className="block text-sm font-medium mb-1">Name</label>
               <input
                 name="name"
-                defaultValue={currentProduct.name}
+                defaultValue={currentProduct.name ?? undefined}
                 disabled={mode === 'view'}
                 required
                 className="w-full rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100"
@@ -128,7 +145,7 @@ export default function ProductModal({
                 name="cost"
                 type="number"
                 step="0.01"
-                defaultValue={currentProduct.cost}
+                defaultValue={currentProduct.cost ?? undefined}
                 disabled={mode === 'view'}
                 required
                 className="w-full rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100"
@@ -140,7 +157,7 @@ export default function ProductModal({
                 name="price"
                 type="number"
                 step="0.01"
-                defaultValue={currentProduct.price}
+                defaultValue={currentProduct.price ?? undefined}
                 disabled={mode === 'view'}
                 required
                 className="w-full rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100"

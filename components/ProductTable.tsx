@@ -3,22 +3,25 @@
 import React, { useEffect, useState } from 'react';
 import { useCart } from './CartContext';
 import { createClient } from '@/utils/supabase/client';
+import { Database } from '@/types/supabase';
+
+type Product = Database['public']['Tables']['product']['Row'];
 
 export default function ProductTable() {
   const supabase = createClient();
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-  const [quantities, setQuantities] = useState<{ [id: number]: number }>({});
+  const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   const { addToCart } = useCart();
 
   useEffect(() => {
-    fetchProduct();
+    void fetchProduct();
   }, []);
 
-  const handleChange = (id: number, delta: number) => {
+  const handleChange = (id: string, delta: number) => {
     setQuantities((prev) => {
-      const currentQty = prev[id] ?? 1; // ถ้ายังไม่มีค่าจะเริ่มที่ 1
-      const newQty = Math.max(1, currentQty + delta); // อย่างน้อยต้อง 1
+      const currentQty = prev[id] ?? 1;
+      const newQty = Math.max(1, currentQty + delta);
       return { ...prev, [id]: newQty };
     });
   };
@@ -31,18 +34,18 @@ export default function ProductTable() {
       .order('created_at', { ascending: true });
 
     if (!data || error) return;
-    setProducts(data);
+    setProducts(data as Product[]);
     setLoading(false);
   };
 
-  const handleInputChange = (id: number, value: string) => {
+  const handleInputChange = (id: string, value: string) => {
     const num = parseInt(value);
     if (!isNaN(num) && num > 0) {
       setQuantities((prev) => ({ ...prev, [id]: num }));
     }
   };
 
-  const handleAdd = (product: any) => {
+  const handleAdd = (product: Product) => {
     const qty = quantities[product.id] ?? 1;
     console.log('🔵 handleAdd called:', product.name, qty);
     addToCart(product, qty);
@@ -64,12 +67,14 @@ export default function ProductTable() {
                   className="bg-white rounded-2xl shadow p-4 flex flex-col items-center text-center"
                 >
                   <img
-                    src={product.image}
-                    alt={product.name}
+                    src={product.attachments ?? ''}
+                    alt={product.name ?? ''}
                     className="w-24 h-24 object-cover mb-4 rounded"
                   />
                   <h2 className="text-lg font-semibold">{product.name}</h2>
-                  <p className="text-gray-600">฿ {product.price.toFixed(2)}</p>
+                  <p className="text-gray-600">
+                    ฿ {(product.price ?? 1).toFixed(2)}
+                  </p>
 
                   <div className="flex items-center mt-4 space-x-2">
                     <button

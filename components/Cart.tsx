@@ -11,7 +11,7 @@ export default function Cart() {
   const supabase = createClient();
   const { cart, removeFromCart, clearCart } = useCart();
   const total = cart.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + (item.product.price ?? 1) * item.quantity,
     0,
   );
 
@@ -68,12 +68,12 @@ export default function Cart() {
                   {item.product.name}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {item.quantity} × ฿{item.product.price.toFixed(2)}
+                  {item.quantity} × ฿{(item.product.price ?? 1).toFixed(2)}
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <p className="font-semibold text-gray-700">
-                  ฿{(item.quantity * item.product.price).toFixed(2)}
+                  ฿{(item.quantity * (item.product.price ?? 1)).toFixed(2)}
                 </p>
                 <button
                   onClick={() => removeFromCart(item.product.id)}
@@ -93,7 +93,7 @@ export default function Cart() {
 
           <div className="pt-4 flex justify-end">
             <button
-              onClick={handleSubmitOrder}
+              onClick={() => handleSubmitOrder}
               className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
             >
               Submit Order

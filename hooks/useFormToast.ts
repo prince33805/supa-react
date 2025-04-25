@@ -6,10 +6,13 @@ interface FormState {
   message: string | null;
 }
 
-export function useFormToast(formState: FormState, options?: {
-  onSuccess?: () => void;
-  onError?: () => void;
-}) {
+export function useFormToast(
+  formState: FormState,
+  options?: {
+    onSuccess?: () => void;
+    onError?: () => void;
+  },
+) {
   const isFirstRender = useRef(true);
 
   useEffect(() => {

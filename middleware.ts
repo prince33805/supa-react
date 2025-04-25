@@ -1,21 +1,21 @@
-import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/utils/supabase/middleware'
+import { NextResponse, type NextRequest } from 'next/server';
+import { createClient } from '@/utils/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
   try {
-    const { supabase, response } = createClient(request)
-    await supabase.auth.getSession()
+    const { supabase, response } = createClient(request);
+    await supabase.auth.getSession();
     if (request.nextUrl.pathname.includes('/')) {
       const {
         data: { user },
-      } = await supabase.auth.getUser()
+      } = await supabase.auth.getUser();
 
       if (!user) {
-        return NextResponse.redirect(new URL('/sign-in', request.url))
+        return NextResponse.redirect(new URL('/sign-in', request.url));
       }
     }
 
-    return response
+    return response;
   } catch (e) {
     // If you are here, a Supabase client could not be created!
     // This is likely because you have not set up environment variables.
@@ -24,15 +24,10 @@ export async function middleware(request: NextRequest) {
       request: {
         headers: request.headers,
       },
-    })
+    });
   }
 }
 
 export const config = {
-  matcher: [
-    '/login',
-    '/',
-    '/product',
-    '/dashboard',
-  ],
-}
+  matcher: ['/login', '/', '/product', '/dashboard'],
+};
