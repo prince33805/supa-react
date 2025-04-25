@@ -1,9 +1,9 @@
-import { signOutAction } from "@/app/actions";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
-import Link from "next/link";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { createClient } from "@/utils/supabase/server";
+import { signOutAction } from '@/app/actions';
+import { hasEnvVars } from '@/utils/supabase/check-env-vars';
+import Link from 'next/link';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { createClient } from '@/utils/supabase/server';
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -18,7 +18,7 @@ export default async function AuthButton() {
         <div className="flex gap-4 items-center">
           <div>
             <Badge
-              variant={"default"}
+              variant={'default'}
               className="font-normal pointer-events-none"
             >
               Please update .env.local file with anon key and url
@@ -28,7 +28,7 @@ export default async function AuthButton() {
             <Button
               asChild
               size="sm"
-              variant={"outline"}
+              variant={'outline'}
               disabled
               className="opacity-75 cursor-none pointer-events-none"
             >
@@ -37,7 +37,7 @@ export default async function AuthButton() {
             <Button
               asChild
               size="sm"
-              variant={"default"}
+              variant={'default'}
               disabled
               className="opacity-75 cursor-none pointer-events-none"
             >
@@ -49,22 +49,45 @@ export default async function AuthButton() {
     );
   }
   return user ? (
-    <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
-          Sign out
-        </Button>
-      </form>
+    <div className="flex items-center w-full gap-4">
+      {/* ซ่อน element ด้านซ้ายไว้เป็นตัวดัน */}
+      {/* <div className="w-1/3" /> */}
+
+      {/* email center */}
+      <div className="w-4/5 flex justify-center md:justify-end md:mr-4 ">
+        <div className="truncate text-center max-w-[8rem] md:max-w-full">
+          Hey, {user.email}!
+        </div>
+      </div>
+
+      {/* ปุ่มขวาสุด */}
+      <div className="w-1/5 flex justify-end ">
+        <form action={signOutAction}>
+          <Button type="submit" variant="default">
+            Sign out
+          </Button>
+        </form>
+      </div>
     </div>
+    // <div className="flex items-center w-full gap-4 bg-red-200">
+    //   <div className="truncate max-w-32 flex justify-center md:max-w-full">
+    //     Hey, {user.email}!
+    //   </div>
+    //   {/* Hey, {user.email}! */}
+    //   <form action={signOutAction}>
+    //     <Button type="submit" variant={'default'}>
+    //       Sign out
+    //     </Button>
+    //   </form>
+    // </div>
   ) : (
     <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
+      <Button asChild size="sm" variant={'default'}>
         <Link href="/sign-in">Sign in</Link>
       </Button>
-      <Button asChild size="sm" variant={"default"}>
+      {/* <Button asChild size="sm" variant={"outline"}>
         <Link href="/sign-up">Sign up</Link>
-      </Button>
+      </Button> */}
     </div>
   );
 }

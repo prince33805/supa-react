@@ -1,16 +1,32 @@
-import Hero from "@/components/hero";
-import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
-import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import Cart from '@/components/Cart';
+import { CartProvider } from '@/components/CartContext';
+import Hero from '@/components/hero';
+import ProductList from '@/components/ProductList';
+import ProductTable from '@/components/ProductTable';
+import ConnectSupabaseSteps from '@/components/tutorial/connect-supabase-steps';
+import SignUpUserSteps from '@/components/tutorial/sign-up-user-steps';
+import { hasEnvVars } from '@/utils/supabase/check-env-vars';
 
 export default async function Home() {
   return (
-    <>
-      <Hero />
-      <main className="flex-1 flex flex-col gap-6 px-4">
-        <h2 className="font-medium text-xl mb-4">Next steps</h2>
-        {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-      </main>
-    </>
+    <CartProvider>
+        <div className="flex flex-col md:flex-row lg:flex-row w-full max-w-5xl mt-2 mx-auto">
+          <div className="w-full md:w-1/2 lg:w-2/3 bg-green-100">
+            <ProductTable />
+          </div>
+
+          <div className="w-full md:w-1/2 lg:w-1/3 bg-gray-100">
+            <Cart />
+          </div>
+        </div>
+      {/* <div className="flex w-full max-w-5xl">
+        <div className="w-2/3 bg-green-100">
+          <ProductTable />
+        </div>
+        <div className="w-1/3 bg-gray-100">
+          <Cart />
+        </div>
+      </div> */}
+    </CartProvider>
   );
 }
