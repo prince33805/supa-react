@@ -13,7 +13,6 @@ type Props = {
 };
 
 export default function ProductTable({ quantities, setQuantities }: Props) {
-
   const supabase = createClient();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);

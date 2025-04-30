@@ -225,17 +225,32 @@ export default function ProductPage() {
             <table className="min-w-full text-left text-sm text-gray-600 dark:text-gray-300">
               <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-4">ID</th>
-                  <th scope="col" className="px-6 py-4">Image</th>
-                  <th scope="col" className="px-6 py-4">Name</th>
-                  <th scope="col" className="px-6 py-4">Cost</th>
-                  <th scope="col" className="px-6 py-4">Price</th>
-                  <th scope="col" className="py-4 flex justify-center">Action</th>
+                  <th scope="col" className="px-6 py-4">
+                    ID
+                  </th>
+                  <th scope="col" className="px-6 py-4">
+                    Image
+                  </th>
+                  <th scope="col" className="px-6 py-4">
+                    Name
+                  </th>
+                  <th scope="col" className="px-6 py-4">
+                    Cost
+                  </th>
+                  <th scope="col" className="px-6 py-4">
+                    Price
+                  </th>
+                  <th scope="col" className="py-4 flex justify-center">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {products?.map((product: Product, index: number) => (
-                  <tr className="hover:bg-gray-50 dark:hover:bg-gray-700" key={product.id}>
+                  <tr
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                    key={product.id}
+                  >
                     <td className="px-6 py-4">{index + 1}</td>
                     <td className="px-6 py-4 font-medium flex items-center gap-3">
                       {product.attachments && (
