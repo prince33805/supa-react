@@ -130,7 +130,9 @@ export default function ProductModal({
           {/* Fields */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Name</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                Name
+              </label>
               <input
                 name="name"
                 defaultValue={currentProduct.name ?? undefined}
@@ -140,7 +142,9 @@ export default function ProductModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Cost</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                Cost
+              </label>
               <input
                 name="cost"
                 type="number"
@@ -152,7 +156,9 @@ export default function ProductModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Price</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                Price
+              </label>
               <input
                 name="price"
                 type="number"

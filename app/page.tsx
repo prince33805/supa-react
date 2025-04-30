@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import Cart from '@/components/Cart';
 import { CartProvider } from '@/components/CartContext';
@@ -19,16 +19,11 @@ export default function Home() {
     <CartProvider>
       <div className="flex flex-col md:flex-row lg:flex-row w-full max-w-5xl mt-2 mx-auto">
         <div className="w-full md:w-1/2 lg:w-2/3 bg-gray-100 dark:bg-black">
-          <ProductTable
-            quantities={quantities}
-            setQuantities={setQuantities}
-          />
+          <ProductTable quantities={quantities} setQuantities={setQuantities} />
         </div>
 
         <div className="w-full md:w-1/2 lg:w-1/3 bg-gray-100 dark:bg-black">
-          <Cart
-            onOrderSubmitted={handleClearQuantities}
-          />
+          <Cart onOrderSubmitted={handleClearQuantities} />
         </div>
       </div>
     </CartProvider>

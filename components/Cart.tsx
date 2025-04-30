@@ -51,7 +51,9 @@ export default function Cart({ onOrderSubmitted }: Props) {
       };
     });
 
-    const { error: itemError } = await supabase.from('order_items').insert(orderItems);
+    const { error: itemError } = await supabase
+      .from('order_items')
+      .insert(orderItems);
     if (itemError) {
       console.error('❌ Failed to insert items, rolling back order...');
       await supabase.from('orders').delete().eq('id', orderId); // rollback
@@ -120,7 +122,9 @@ export default function Cart({ onOrderSubmitted }: Props) {
 
           <div className="pt-4 flex justify-end">
             <button
-              onClick={() => handleSubmitOrder()}
+              onClick={() => {
+                void handleSubmitOrder();
+              }}
               className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
             >
               Submit Order
