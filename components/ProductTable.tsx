@@ -7,11 +7,17 @@ import { Database } from '@/types/supabase';
 
 type Product = Database['public']['Tables']['product']['Row'];
 
-export default function ProductTable() {
+type Props = {
+  quantities: { [id: string]: number };
+  setQuantities: React.Dispatch<React.SetStateAction<{ [id: string]: number }>>;
+};
+
+export default function ProductTable({ quantities, setQuantities }: Props) {
+
   const supabase = createClient();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-  const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
+  // const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -60,41 +66,41 @@ export default function ProductTable() {
       ) : (
         <>
           <div className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-2xl shadow p-4 flex flex-col items-center text-center"
+                  className="bg-white dark:bg-gray-900 text-black dark:text-white rounded-2xl shadow p-4 flex flex-col items-center text-center"
                 >
                   <img
-                    src={product.attachments ?? ''}
+                    src={product.attachments ?? undefined}
                     alt={product.name ?? ''}
                     className="w-24 h-24 object-cover mb-4 rounded"
                   />
                   <h2 className="text-lg font-semibold">{product.name}</h2>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-400">
                     ฿ {(product.price ?? 1).toFixed(2)}
                   </p>
 
                   <div className="flex items-center mt-4 space-x-2">
                     <button
                       onClick={() => handleChange(product.id, -1)}
-                      className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                      className="px-2 py-1 bg-gray-200 dark:bg-gray-700 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600"
                     >
                       -
                     </button>
                     <input
-                      type="number"
+                      type="text"
                       min="1"
                       value={quantities[product.id] ?? '1'}
                       onChange={(e) =>
                         handleInputChange(product.id, e.target.value)
                       }
-                      className="w-14 text-center border rounded px-2 py-1"
+                      className="w-14 text-center border dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded px-2 py-1"
                     />
                     <button
                       onClick={() => handleChange(product.id, 1)}
-                      className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                      className="px-2 py-1 bg-gray-200 dark:bg-gray-700 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600"
                     >
                       +
                     </button>
@@ -102,7 +108,7 @@ export default function ProductTable() {
 
                   <button
                     onClick={() => handleAdd(product)}
-                    className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                    className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition dark:bg-blue-500 dark:hover:bg-blue-600"
                   >
                     Add to Cart
                   </button>
