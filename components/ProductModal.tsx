@@ -1,14 +1,31 @@
 'use client';
 
 import React from 'react';
+// import { Database } from '@/types/supabase';
+
+// type Product = Database['public']['Tables']['product']['Row'];
+
+type currentProduct = {
+  id: string | null;
+  name: string | null;
+  price: number | null;
+  cost: number | null;
+  attachments: string | null;
+  // add more fields as needed
+};
+
+type formState = {
+  success: boolean;
+  message: string | null;
+};
 
 interface ProductModalProps {
   isOpen: boolean;
   mode: 'create' | 'edit' | 'view' | null;
-  currentProduct: any;
+  currentProduct: currentProduct;
   onClose: () => void;
   onSubmit: (formData: FormData) => void;
-  formState: any;
+  formState: formState;
   imageState: {
     success: boolean;
     message: string;
@@ -33,9 +50,9 @@ export default function ProductModal({
   if (!isOpen || !currentProduct || !mode) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-        <h2 className="text-xl font-semibold mb-6">
+    <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg w-full max-w-md md:max-w-lg xl:max-w-2xl p-6 md:p-8">
+        <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
           {
             {
               view: 'Product Details',
@@ -59,7 +76,7 @@ export default function ProductModal({
         >
           <input type="hidden" name="mode" value={mode} />
           {mode === 'edit' && (
-            <input type="hidden" name="id" value={currentProduct.id} />
+            <input type="hidden" name="id" value={currentProduct.id ?? ''} />
           )}
 
           {/* Image Preview */}
@@ -67,7 +84,7 @@ export default function ProductModal({
             {mode === 'view' && currentProduct.attachments && (
               <img
                 src={currentProduct.attachments}
-                alt={currentProduct.name}
+                alt={currentProduct.name ?? undefined}
                 className="w-16 h-16 rounded-full object-cover border"
               />
             )}
@@ -77,16 +94,16 @@ export default function ProductModal({
                   <img
                     src={previewImage}
                     alt="Preview"
-                    className="w-16 h-16 rounded-full object-cover border"
+                    className="w-16 h-16 rounded-full object-cover border dark:border-gray-700"
                   />
                 ) : currentProduct.attachments ? (
                   <img
                     src={currentProduct.attachments}
-                    alt={currentProduct.name}
-                    className="w-16 h-16 rounded-full object-cover border"
+                    alt={currentProduct.name ?? undefined}
+                    className="w-16 h-16 rounded-full object-cover border dark:border-gray-700"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full border bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+                  <div className="w-16 h-16 rounded-full border bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-300 text-sm">
                     No Image
                   </div>
                 )}
@@ -97,13 +114,13 @@ export default function ProductModal({
           {/* Image Input */}
           {mode !== 'view' && (
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                 Upload Image
               </label>
               <input
                 type="file"
                 name="image"
-                className="text-sm"
+                className="text-sm text-gray-700 dark:text-gray-300"
                 accept="image/png, image/jpeg"
                 onChange={onImageChange}
               />
@@ -113,37 +130,37 @@ export default function ProductModal({
           {/* Fields */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Name</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Name</label>
               <input
                 name="name"
-                defaultValue={currentProduct.name}
+                defaultValue={currentProduct.name ?? undefined}
                 disabled={mode === 'view'}
                 required
-                className="w-full rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100"
+                className="w-full rounded-lg border px-3 py-2 text-sm text-gray-700 dark:text-gray-300 dark:bg-gray-800 disabled:bg-gray-100 dark:disabled:bg-gray-700"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Cost</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Cost</label>
               <input
                 name="cost"
                 type="number"
                 step="0.01"
-                defaultValue={currentProduct.cost}
+                defaultValue={currentProduct.cost ?? undefined}
                 disabled={mode === 'view'}
                 required
-                className="w-full rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100"
+                className="w-full rounded-lg border px-3 py-2 text-sm text-gray-700 dark:text-gray-300 dark:bg-gray-800 disabled:bg-gray-100 dark:disabled:bg-gray-700"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Price</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Price</label>
               <input
                 name="price"
                 type="number"
                 step="0.01"
-                defaultValue={currentProduct.price}
+                defaultValue={currentProduct.price ?? undefined}
                 disabled={mode === 'view'}
                 required
-                className="w-full rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100"
+                className="w-full rounded-lg border px-3 py-2 text-sm text-gray-700 dark:text-gray-300 dark:bg-gray-800 disabled:bg-gray-100 dark:disabled:bg-gray-700"
               />
             </div>
           </div>
@@ -169,7 +186,7 @@ export default function ProductModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 rounded-lg"
+              className="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300 rounded-lg"
             >
               Close
             </button>

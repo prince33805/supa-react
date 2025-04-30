@@ -1,31 +1,32 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { Database } from '@/types/supabase';
+
+type Product = Database['public']['Tables']['product']['Row'];
 
 export default function ProductList() {
-  const supabase = createClient()
-  const [products, setProducts] = useState<any>([])
+  const supabase = createClient();
+  const [products, setProducts] = useState<Product[]>([]);
 
   const productSupabaseQuery = () => {
-    let query = supabase
-      .from('product')
-      .select('*', { count: 'exact' })
-    console.log(query)
-    return query
-  }
+    const query = supabase.from('product').select('*');
+    console.log(query);
+    return query;
+  };
 
   const fetchProduct = async () => {
-    const { data: usersData, error, count } = await productSupabaseQuery()
+    const { data: usersData, error } = await productSupabaseQuery();
     if (!usersData || error) {
-      return false
+      return false;
     }
-    setProducts(usersData)
-  }
+    setProducts(usersData);
+  };
 
   useEffect(() => {
-    fetchProduct()
-  }, [])
+    void fetchProduct();
+  }, []);
 
   return (
     // opacity-0
@@ -49,7 +50,7 @@ export default function ProductList() {
             </tr>
           </thead>
           <tbody>
-            {products?.map((product: any) => (
+            {products?.map((product: Product) => (
               <tr key={product.id}>
                 <td>{product.id}</td>
                 <td>{product.name}</td>
@@ -61,5 +62,5 @@ export default function ProductList() {
         </table>
       </main>
     </div>
-  )
+  );
 }

@@ -2,12 +2,16 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type Product = {
-  id: number;
-  name: string;
-  price: number;
-  image?: string;
-};
+import { Database } from '@/types/supabase';
+
+type Product = Database['public']['Tables']['product']['Row'];
+
+// type Product = {
+//   id: number;
+//   name: string;
+//   price: number;
+//   image?: string;
+// };
 
 type CartItem = {
   product: Product;
@@ -17,7 +21,7 @@ type CartItem = {
 type CartContextType = {
   cart: CartItem[];
   addToCart: (product: Product, quantity: number) => void;
-  removeFromCart: (productId: number) => void;
+  removeFromCart: (productId: string) => void;
   clearCart: () => void;
 };
 
@@ -50,7 +54,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (productId: string) => {
     setCart((prevCart) =>
       prevCart.filter((item) => item.product.id !== productId),
     );

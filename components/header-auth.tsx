@@ -69,6 +69,7 @@ export default async function AuthButton() {
         </form>
       </div>
     </div>
+  ) : (
     // <div className="flex items-center w-full gap-4 bg-red-200">
     //   <div className="truncate max-w-32 flex justify-center md:max-w-full">
     //     Hey, {user.email}!
@@ -80,7 +81,6 @@ export default async function AuthButton() {
     //     </Button>
     //   </form>
     // </div>
-  ) : (
     <div className="flex gap-2">
       <Button asChild size="sm" variant={'default'}>
         <Link href="/sign-in">Sign in</Link>

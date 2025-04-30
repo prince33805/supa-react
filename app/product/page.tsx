@@ -1,12 +1,24 @@
 'use client';
 
-import { useEffect, useState, useActionState, useRef } from 'react';
+import { useEffect, useState, useActionState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { cuprod } from './actions';
 import ProductModal from '@/components/ProductModal';
 import { useFormToast } from '@/hooks/useFormToast';
+import { Database } from '@/types/supabase';
+
+type Product = Database['public']['Tables']['product']['Row'];
+
+type currentProduct = {
+  id: string | null;
+  name: string | null;
+  price: number | null;
+  cost: number | null;
+  attachments: string | null;
+  // add more fields as needed
+};
 
 const initialState = {
   success: false,
@@ -15,10 +27,12 @@ const initialState = {
 
 export default function ProductPage() {
   const supabase = createClient();
-  const [products, setProducts] = useState<any>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit' | 'view' | null>(null);
-  const [currentProduct, setCurrentProduct] = useState<any | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<currentProduct | null>(
+    null,
+  );
   const [formState, formAction] = useActionState(cuprod, initialState);
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -31,7 +45,7 @@ export default function ProductPage() {
 
   // init
   useEffect(() => {
-    fetchProduct(); // Fetch products on initial render
+    void fetchProduct(); // Fetch products on initial render
   }, []); // Empty dependency array to run only once when the component mounts
 
   //
@@ -56,7 +70,7 @@ export default function ProductPage() {
     onSuccess: () => {
       setIsOpen(false);
       setImageState({ success: true, message: '' });
-      fetchProduct();
+      void fetchProduct();
       setShouldShowError(false);
     },
     onError: () => {
@@ -67,9 +81,13 @@ export default function ProductPage() {
   // refresh dashboard // ^^ รวมได้หรือไม่
   useEffect(() => {
     if (shouldRefresh) {
-      fetchProduct().then(() => {
-        setShouldRefresh(false);
-      });
+      fetchProduct()
+        .then(() => {
+          setShouldRefresh(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch product:', err);
+        });
     }
   }, [shouldRefresh]);
 
@@ -108,10 +126,19 @@ export default function ProductPage() {
   //   }
   // }, [formState]);
 
-  const handleOpen = (mode: 'create' | 'edit' | 'view', product?: any) => {
+  const handleOpen = (
+    mode: 'create' | 'edit' | 'view',
+    product?: currentProduct,
+  ) => {
     setMode(mode);
     if (mode === 'create') {
-      setCurrentProduct({ name: '', cost: '', price: '', image: '' });
+      setCurrentProduct({
+        id: '',
+        name: '',
+        cost: 0,
+        price: 0,
+        attachments: '',
+      });
     } else {
       // view + edit
       setCurrentProduct(product || null);
@@ -127,21 +154,21 @@ export default function ProductPage() {
   };
 
   const handleDelete = (id: string) => {
-    setProducts(products.filter((p: any) => p.id !== id));
+    setProducts(products.filter((p: Product) => p.id !== id));
   };
 
   const productSupabaseQuery = () => {
-    let query = supabase
+    const query = supabase
       .from('product')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: true });
-    console.log('product', query);
+    // console.log('product', query);
     return query;
   };
 
   const fetchProduct = async () => {
     setLoading(true);
-    const { data: productData, error, count } = await productSupabaseQuery();
+    const { data: productData, error } = await productSupabaseQuery();
     if (!productData || error) {
       return false;
     }
@@ -179,9 +206,9 @@ export default function ProductPage() {
   };
 
   return (
-    <div className="relative w-full xl:w-[70%]">
+    <div className="relative w-full md:w-[90%] lg:w-[80%] xl:w-[70%] mx-auto">
       {loading ? (
-        <div className="text-center py-10 text-gray-500 min-h-screen">
+        <div className="text-center py-10 text-gray-500 dark:text-gray-400 min-h-screen">
           Loading products...
         </div>
       ) : (
@@ -195,38 +222,26 @@ export default function ProductPage() {
             </button>
           </div>
           <div className="overflow-x-auto rounded-2xl shadow-md">
-            <table className="min-w-full text-left text-sm text-gray-600 ">
-              <thead className="bg-gray-100 text-xs uppercase text-gray-500">
+            <table className="min-w-full text-left text-sm text-gray-600 dark:text-gray-300">
+              <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-4">
-                    ID
-                  </th>
-                  <th scope="col" className="px-6 py-4">
-                    Image
-                  </th>
-                  <th scope="col" className="px-6 py-4">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-4">
-                    Cost
-                  </th>
-                  <th scope="col" className="px-6 py-4">
-                    Price
-                  </th>
-                  <th scope="col" className="py-4 flex justify-center ">
-                    Action
-                  </th>
+                  <th scope="col" className="px-6 py-4">ID</th>
+                  <th scope="col" className="px-6 py-4">Image</th>
+                  <th scope="col" className="px-6 py-4">Name</th>
+                  <th scope="col" className="px-6 py-4">Cost</th>
+                  <th scope="col" className="px-6 py-4">Price</th>
+                  <th scope="col" className="py-4 flex justify-center">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
-                {products?.map((product: any, index: number) => (
-                  <tr className="hover:bg-gray-50" key={product.id}>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {products?.map((product: Product, index: number) => (
+                  <tr className="hover:bg-gray-50 dark:hover:bg-gray-700" key={product.id}>
                     <td className="px-6 py-4">{index + 1}</td>
                     <td className="px-6 py-4 font-medium flex items-center gap-3">
                       {product.attachments && (
                         <img
                           src={product.attachments}
-                          alt={product.name}
+                          alt={product.name ?? undefined}
                           className="w-8 h-8 rounded-full object-cover"
                         />
                       )}
@@ -238,7 +253,7 @@ export default function ProductPage() {
                     <td className="py-4 flex justify-center gap-4">
                       <button
                         onClick={() => handleOpen('view', product)}
-                        className="p-2 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
+                        className="p-2 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -263,7 +278,7 @@ export default function ProductPage() {
                       </button>
                       <button
                         onClick={() => handleOpen('edit', product)}
-                        className="p-2 rounded-md bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
+                        className="p-2 rounded-md bg-yellow-100 text-yellow-600 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:hover:bg-yellow-800"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -282,7 +297,7 @@ export default function ProductPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(product.id)}
-                        className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
+                        className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -310,9 +325,9 @@ export default function ProductPage() {
 
       {/* Popup Detail Card */}
       {isOpen && currentProduct && mode && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-            <h2 className="text-xl font-semibold mb-6">
+        <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg w-full max-w-md p-6">
+            <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
               {
                 {
                   view: 'Product Details',

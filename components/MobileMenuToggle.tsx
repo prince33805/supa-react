@@ -17,23 +17,23 @@ export default function MobileMenuToggle() {
         <>
           {/* Overlay ด้านหลัง sidebar */}
           <div
-            className="fixed inset-0 bg-black bg-opacity-30 z-40"
+            className="fixed inset-0 bg-black bg-opacity-30 dark:bg-opacity-50 z-40"
             onClick={() => setOpen(false)}
           />
 
           {/* Sidebar */}
-          <div className="fixed top-0 left-0 h-screen w-[80%] bg-white shadow-lg border-l z-50 flex flex-col gap-4 animate-slide-in">
+          <div className="fixed top-0 left-0 h-screen w-[80%] bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-lg border-l dark:border-gray-700 z-50 flex flex-col gap-4 animate-slide-in">
             <Link
               href="/"
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 transition-all duration-200"
+              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-all duration-200"
             >
               HOME
             </Link>
             <Link
               href="/product"
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 transition-all duration-200"
+              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-all duration-200"
             >
               PRODUCT
             </Link>
@@ -41,7 +41,7 @@ export default function MobileMenuToggle() {
             <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 transition-all duration-200"
+              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-all duration-200"
             >
               DASHBOARD
             </Link>
