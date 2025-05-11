@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from './CartContext';
 import { createClient } from '@/utils/supabase/client'; // อย่าลืมนำเข้า Supabase client
 import { Database } from '@/types/supabase';
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
 
 type OrderInsert = Database['public']['Tables']['orders']['Insert'];
 type OrderItemInsert = Database['public']['Tables']['order_items']['Insert'];
@@ -16,6 +17,8 @@ type Props = {
 export default function Cart({ onOrderSubmitted }: Props) {
   const supabase = createClient();
   const { cart, removeFromCart, clearCart } = useCart();
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'qr'>('cash');
+
   const total = cart.reduce(
     (sum, item) => sum + (item.product.price ?? 1) * item.quantity,
     0,
@@ -27,6 +30,7 @@ export default function Cart({ onOrderSubmitted }: Props) {
     const order: OrderInsert = {
       id: orderId,
       total_price: total,
+      payment_method: paymentMethod,
       created_at: timestamp,
       updated_at: timestamp,
     };
@@ -120,12 +124,52 @@ export default function Cart({ onOrderSubmitted }: Props) {
             </p>
           </div>
 
+          <div className="space-y-3 mb-6">
+            <p className="font-medium">💳 Payment Method</p>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="payment"
+                  value="cash"
+                  checked={paymentMethod === 'cash'}
+                  onChange={() => setPaymentMethod('cash')}
+                />
+                <span>Cash</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="payment"
+                  value="qr"
+                  checked={paymentMethod === 'qr'}
+                  onChange={() => setPaymentMethod('qr')}
+                />
+                <span>QR Code Payment</span>
+              </label>
+
+              {paymentMethod === 'qr' && (
+                <div className="mt-2 mx-auto">
+                  <Image
+                    src="/images/qrcode.jpeg" // เปลี่ยนเป็น path QR จริง
+                    alt="QR Payment"
+                    width={200}
+                    height={200}
+                    className="border rounded"
+                  />
+                  <p className="text-sm mt-1 text-gray-500">📸 Scan to pay</p>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="pt-4 flex justify-end">
             <button
               onClick={() => {
                 void handleSubmitOrder();
               }}
-              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition mx-auto"
             >
               Submit Order
             </button>

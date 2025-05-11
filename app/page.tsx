@@ -18,11 +18,11 @@ export default function Home() {
   return (
     <CartProvider>
       <div className="flex flex-col md:flex-row lg:flex-row w-full max-w-5xl mt-2 mx-auto">
-        <div className="w-full md:w-1/2 lg:w-2/3 bg-gray-100 dark:bg-black">
+        <div className="w-full md:w-1/2 lg:w-2/3 dark:bg-black">
           <ProductTable quantities={quantities} setQuantities={setQuantities} />
         </div>
-
-        <div className="w-full md:w-1/2 lg:w-1/3 bg-gray-100 dark:bg-black">
+        {/* bg-gray-100 */}
+        <div className="w-full md:w-1/2 lg:w-1/3  dark:bg-black">
           <Cart onOrderSubmitted={handleClearQuantities} />
         </div>
       </div>

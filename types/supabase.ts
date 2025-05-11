@@ -11,27 +11,33 @@ export type Database = {
     Tables: {
       order_items: {
         Row: {
+          created_at: string | null
           id: string
           order_id: string | null
           price: number
-          product_id: string
+          product_id: string | null
           quantity: number
+          total_price_product: number | null
           updated_at: string | null
         }
         Insert: {
+          created_at?: string | null
           id?: string
           order_id?: string | null
           price: number
-          product_id: string
+          product_id?: string | null
           quantity: number
+          total_price_product?: number | null
           updated_at?: string | null
         }
         Update: {
+          created_at?: string | null
           id?: string
           order_id?: string | null
           price?: number
-          product_id?: string
+          product_id?: string | null
           quantity?: number
+          total_price_product?: number | null
           updated_at?: string | null
         }
         Relationships: [
@@ -42,24 +48,35 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
         Row: {
+          items: any
           created_at: string | null
           id: string
+          payment_method: string | null
           total_price: number
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
+          payment_method?: string | null
           total_price: number
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
+          payment_method?: string | null
           total_price?: number
           updated_at?: string | null
         }
