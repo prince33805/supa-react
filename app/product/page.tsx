@@ -48,24 +48,6 @@ export default function ProductPage() {
     void fetchProduct(); // Fetch products on initial render
   }, []); // Empty dependency array to run only once when the component mounts
 
-  //
-  // useEffect(() => {
-  //   if (isFirstRender.current) {
-  //     isFirstRender.current = false;
-  //     return;
-  //   }
-  //   if (formState.success) {
-  //     toast.success(formState.message || 'Success');
-  //     setIsOpen(false);
-  //     setImageState({ success: true, message: '' });
-  //     setShouldRefresh(true);
-  //     setShouldShowError(false);
-  //   } else if (formState.message) {
-  //     toast.error(formState.message);
-  //     setShouldShowError(true);
-  //   }
-  // }, [formState]);
-
   useFormToast(formState, {
     onSuccess: () => {
       setIsOpen(false);
@@ -90,41 +72,6 @@ export default function ProductPage() {
         });
     }
   }, [shouldRefresh]);
-
-  // if update success then trigger
-  // useEffect(() => {
-  //   if (formState.success) {
-  //     setIsOpen(false);
-  //     setImageState({ success: true, message: '' });
-  //     setShouldRefresh(true);
-  //   }
-  // }, [formState]);
-
-  // toast
-  // useEffect(() => {
-  //   if (isFirstRender.current) {
-  //     isFirstRender.current = false;
-  //     return;
-  //   }
-  //   if (formState.message) {
-  //     if (formState.success) {
-  //       toast.success(formState.message);
-  //     } else {
-  //       toast.error(formState.message);
-  //     }
-  //   }
-  //   if (formState.success) {
-  //     setShouldRefresh(true);
-  //     setIsOpen(false);
-  //   }
-  // }, [formState]);
-
-  // เมื่อมี error เกิดขึ้น ให้แสดง error
-  // useEffect(() => {
-  //   if (formState?.success === false) {
-  //     setShouldShowError(true);
-  //   }
-  // }, [formState]);
 
   const handleOpen = (
     mode: 'create' | 'edit' | 'view',
@@ -153,17 +100,33 @@ export default function ProductPage() {
     setShouldShowError(false); // ซ่อน error message เมื่อปิด
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this product? This action can be undone later.',
+    );
+
+    if (!confirmDelete) return;
+
+    const { error } = await supabase
+      .from('product')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Failed to soft delete:', error.message);
+      return;
+    }
+
+    // Optimistically update UI
     setProducts(products.filter((p: Product) => p.id !== id));
   };
 
   const productSupabaseQuery = () => {
-    const query = supabase
+    return supabase
       .from('product')
       .select('*', { count: 'exact' })
+      .is('deleted_at', null)
       .order('created_at', { ascending: true });
-    // console.log('product', query);
-    return query;
   };
 
   const fetchProduct = async () => {

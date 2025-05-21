@@ -11,33 +11,36 @@ export type Database = {
     Tables: {
       order_items: {
         Row: {
-          created_at: string | null
+          created_at: string
+          deleted_at: string | null
           id: string
-          order_id: string | null
+          order_id: string
           price: number
-          product_id: string | null
+          product_id: string
           quantity: number
-          total_price_product: number | null
+          total_price_product: number
           updated_at: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
+          deleted_at?: string | null
           id?: string
-          order_id?: string | null
+          order_id: string
           price: number
-          product_id?: string | null
+          product_id: string
           quantity: number
-          total_price_product?: number | null
+          total_price_product: number
           updated_at?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
+          deleted_at?: string | null
           id?: string
-          order_id?: string | null
+          order_id?: string
           price?: number
-          product_id?: string | null
+          product_id?: string
           quantity?: number
-          total_price_product?: number | null
+          total_price_product?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -59,22 +62,24 @@ export type Database = {
       }
       orders: {
         Row: {
-          items: any
-          created_at: string | null
+          created_at: string
+          deleted_at: string | null
           id: string
           payment_method: string | null
           total_price: number
           updated_at: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
+          deleted_at?: string | null
           id?: string
           payment_method?: string | null
           total_price: number
           updated_at?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
+          deleted_at?: string | null
           id?: string
           payment_method?: string | null
           total_price?: number
@@ -85,57 +90,66 @@ export type Database = {
       product: {
         Row: {
           attachments: string | null
-          cost: number | null
+          cost: number
           created_at: string
+          deleted_at: string | null
           id: string
-          name: string | null
-          price: number | null
+          name: string
+          price: number
           updated_at: string | null
         }
         Insert: {
           attachments?: string | null
-          cost?: number | null
+          cost: number
           created_at?: string
+          deleted_at?: string | null
           id?: string
-          name?: string | null
-          price?: number | null
+          name: string
+          price: number
           updated_at?: string | null
         }
         Update: {
           attachments?: string | null
-          cost?: number | null
+          cost?: number
           created_at?: string
+          deleted_at?: string | null
           id?: string
-          name?: string | null
-          price?: number | null
+          name?: string
+          price?: number
           updated_at?: string | null
         }
         Relationships: []
       }
-      user: {
+      profiles: {
         Row: {
-          created_at: string
-          email: string | null
-          fullname: string | null
-          id: number
-          tel: string | null
+          created_at: string | null
+          deleted_at: string | null
+          email: string
+          id: string
+          phone: string | null
+          role: string | null
           updated_at: string | null
+          username: string | null
         }
         Insert: {
-          created_at?: string
-          email?: string | null
-          fullname?: string | null
-          id?: number
-          tel?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          email: string
+          id: string
+          phone?: string | null
+          role?: string | null
           updated_at?: string | null
+          username?: string | null
         }
         Update: {
-          created_at?: string
-          email?: string | null
-          fullname?: string | null
-          id?: number
-          tel?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          email?: string
+          id?: string
+          phone?: string | null
+          role?: string | null
           updated_at?: string | null
+          username?: string | null
         }
         Relationships: []
       }

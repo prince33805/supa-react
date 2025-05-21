@@ -14,7 +14,7 @@ export const getOrdersWithItems = async (
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  const { data, count, error } = await supabase
+  let query = supabase
     .from('orders')
     .select(
       `
@@ -38,6 +38,8 @@ export const getOrdersWithItems = async (
     )
     .order('created_at', { ascending: false })
     .range(from, to);
+
+  const { data, count, error } = await query;
 
   if (error) {
     console.error('Error fetching orders:', error.message);
