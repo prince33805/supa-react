@@ -50,18 +50,14 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center w-full gap-4">
-      {/* ซ่อน element ด้านซ้ายไว้เป็นตัวดัน */}
-      {/* <div className="w-1/3" /> */}
-
       {/* email center */}
       <div className="w-4/5 flex justify-center md:justify-end md:mr-4 ">
-        <div className="truncate text-center max-w-[8rem] md:max-w-full">
+        <div className="truncate text-center max-w-[8rem] md:max-w-[8rem]">
           Hey, {user.email}!
         </div>
       </div>
-
       {/* ปุ่มขวาสุด */}
-      <div className="w-1/5 flex justify-end ">
+      <div className="w-1/5 flex justify-end mr-4">
         <form action={signOutAction}>
           <Button type="submit" variant="default">
             Sign out
@@ -70,24 +66,10 @@ export default async function AuthButton() {
       </div>
     </div>
   ) : (
-    // <div className="flex items-center w-full gap-4 bg-red-200">
-    //   <div className="truncate max-w-32 flex justify-center md:max-w-full">
-    //     Hey, {user.email}!
-    //   </div>
-    //   {/* Hey, {user.email}! */}
-    //   <form action={signOutAction}>
-    //     <Button type="submit" variant={'default'}>
-    //       Sign out
-    //     </Button>
-    //   </form>
-    // </div>
     <div className="flex gap-2">
       <Button asChild size="sm" variant={'default'}>
         <Link href="/sign-in">Sign in</Link>
       </Button>
-      {/* <Button asChild size="sm" variant={"outline"}>
-        <Link href="/sign-up">Sign up</Link>
-      </Button> */}
     </div>
   );
 }

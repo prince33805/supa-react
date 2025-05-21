@@ -4,7 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 
-export default function MobileMenuToggle() {
+export default function MobileMenuToggle({
+  isLoggedIn,
+  role,
+}: {
+  isLoggedIn: boolean;
+  role: string;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -26,22 +32,47 @@ export default function MobileMenuToggle() {
             <Link
               href="/"
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-all duration-200"
+              className="block px-4 py-3 text-base font-semibold rounded hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-all duration-200"
             >
               HOME
             </Link>
             <Link
               href="/product"
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-all duration-200"
+              className={`block px-4 py-3 text-base font-semibold rounded transition-all duration-200
+                ${
+                  isLoggedIn
+                    ? 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400'
+                    : 'pointer-events-none opacity-40 cursor-not-allowed'
+                }
+              `}
             >
               PRODUCT
             </Link>
 
             <Link
+              href="/order"
+              onClick={() => setOpen(false)}
+              className={`block px-4 py-3 text-base font-semibold rounded transition-all duration-200
+                ${
+                  isLoggedIn
+                    ? 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400'
+                    : 'pointer-events-none opacity-40 cursor-not-allowed'
+                }
+              `}
+            >
+              ORDER
+            </Link>
+            <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
-              className="block px-4 py-3 text-lg font-semibold rounded hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-all duration-200"
+              className={`block px-4 py-3 text-base font-semibold rounded transition-all duration-200
+                ${
+                  isLoggedIn && role === 'admin'
+                    ? 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400'
+                    : 'pointer-events-none opacity-40 cursor-not-allowed'
+                }
+              `}
             >
               DASHBOARD
             </Link>

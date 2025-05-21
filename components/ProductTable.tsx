@@ -36,6 +36,7 @@ export default function ProductTable({ quantities, setQuantities }: Props) {
     const { data, error } = await supabase
       .from('product')
       .select('*')
+      .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
     if (!data || error) return;
@@ -52,7 +53,7 @@ export default function ProductTable({ quantities, setQuantities }: Props) {
 
   const handleAdd = (product: Product) => {
     const qty = quantities[product.id] ?? 1;
-    console.log('🔵 handleAdd called:', product.name, qty);
+    // console.log('🔵 handleAdd called:', product.name, qty);
     addToCart(product, qty);
   };
 

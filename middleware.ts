@@ -2,32 +2,27 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/utils/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
+  // console.log('🔐 Running middleware for:', request.nextUrl.pathname);
+
   try {
     const { supabase, response } = createClient(request);
-    await supabase.auth.getSession();
-    if (request.nextUrl.pathname.includes('/')) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
 
-      if (!user) {
-        return NextResponse.redirect(new URL('/sign-in', request.url));
-      }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      // console.log('🔒 User not logged in, redirecting...');
+      return NextResponse.redirect(new URL('/', request.url));
     }
 
     return response;
-  } catch (e) {
-    // If you are here, a Supabase client could not be created!
-    // This is likely because you have not set up environment variables.
-    // Check out http://localhost:3000 for Next Steps.
-    return NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    });
+  } catch (error) {
+    console.error('❌ Middleware error:', error);
+    return NextResponse.next();
   }
 }
 
 export const config = {
-  matcher: ['/login', '/', '/product', '/dashboard'],
+  matcher: ['/product', '/dashboard', '/order'],
 };

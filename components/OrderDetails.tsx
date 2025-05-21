@@ -1,11 +1,20 @@
 'use client';
 
 import { Button } from './ui/button';
-import { Database } from '@/types/supabase';
+// import { Database } from '@/types/supabase';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-type Orders = Database['public']['Tables']['orders']['Row'];
+// type Orders = Database['public']['Tables']['orders']['Row'];
+type Orders = {
+  created_at: string;
+  deleted_at: string | null;
+  id: string;
+  payment_method: string | null;
+  total_price: number;
+  updated_at: string | null;
+  items: [];
+};
 
 type OrderItems = {
   product: { name: string };
