@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "lint": "eslint . --max-warnings=0",
     "build": "next build",
     "start": "next start",
     "gen:types": "npx supabase gen types typescript --project-id ulfpbrucgvvlqpxhlsjh > types/supabase.ts",
@@ -35,6 +36,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.27.0",
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
