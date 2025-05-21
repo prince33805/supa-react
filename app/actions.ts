@@ -18,11 +18,11 @@ export const updateUserRole = async (userId: string, role: string) => {
 };
 
 export const signUpAction = async (formData: FormData) => {
-  const email = formData.get('email')?.toString();
-  const password = formData.get('password')?.toString();
-  const confirmPassword = formData.get('confirmPassword')?.toString();
-  const username = formData.get('username')?.toString();
-  const phone = formData.get('phone')?.toString();
+  const email = formData.get('email') as string | null;
+  const password = formData.get('password') as string | null;
+  const confirmPassword = formData.get('confirmPassword') as string | null;
+  const username = formData.get('username') as string | null;
+  const phone = formData.get('phone') as string | null;
 
   const origin = (await headers()).get('origin') || '';
   const supabase = await createClient();

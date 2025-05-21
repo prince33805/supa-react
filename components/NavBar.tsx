@@ -2,23 +2,16 @@ import Link from 'next/link';
 import HeaderAuth from './header-auth'; // Server component
 import { EnvVarWarning } from '@/components/env-var-warning';
 import MobileMenuToggle from './MobileMenuToggle'; // Client component
-import { createClient } from '@/utils/supabase/server';
 
-export default async function NavBar({
+export default function NavBar({
   hasEnvVars,
   isLoggedIn,
+  role,
 }: {
   hasEnvVars: boolean;
   isLoggedIn: boolean;
+  role: string;
 }) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const role = user?.user_metadata?.role;
-  // console.log('user', user?.user_metadata);
-
   return (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 dark:border-b-gray-700 bg-white dark:bg-gray-900 h-16 relative">
       <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm text-gray-800 dark:text-gray-200">
@@ -69,7 +62,7 @@ export default async function NavBar({
         </div>
         {/* Mobile Toggle Button */}
         <div className="md:hidden">
-          <MobileMenuToggle isLoggedIn={isLoggedIn} />
+          <MobileMenuToggle isLoggedIn={isLoggedIn} role={role} />
         </div>
 
         {/* Right-side */}

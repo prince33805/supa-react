@@ -274,7 +274,9 @@ export default function ProductPage() {
                         </svg>
                       </button>
                       <button
-                        onClick={() => handleDelete(product.id)}
+                        onClick={() => {
+                          void handleDelete(product.id);
+                        }}
                         className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800"
                       >
                         <svg

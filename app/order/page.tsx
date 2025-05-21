@@ -9,11 +9,23 @@ import OrderDetails from '@/components/OrderDetails';
 
 type Orders = Database['public']['Tables']['orders']['Row'];
 
+type OrdersWithItems = {
+  created_at: string;
+  deleted_at: string | null;
+  updated_at: string | null;
+  id: string;
+  payment_method: string | null;
+  total_price: number;
+  items: [];
+};
+
 const pageSize = 10;
 
 export default function OrderTable() {
   const [orders, setOrders] = useState<Orders[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<Orders | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrdersWithItems | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -145,7 +157,9 @@ export default function OrderTable() {
             {/* Export Button */}
             <div className="">
               <button
-                onClick={handleExportCSV}
+                onClick={() => {
+                  void handleExportCSV();
+                }}
                 className="bg-green-600 hover:bg-green-700 text-white text-sm px-10 md:px-4 py-2 rounded-md shadow "
               >
                 Export CSV
@@ -175,7 +189,7 @@ export default function OrderTable() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {orders?.map((order: Orders, index: number) => (
+                {orders?.map((order: Orders) => (
                   <tr
                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                     key={order.id}
@@ -203,7 +217,9 @@ export default function OrderTable() {
 
                     <td className="py-4 flex justify-center gap-4">
                       <button
-                        onClick={() => setSelectedOrder(order)}
+                        onClick={() =>
+                          setSelectedOrder({ ...order, items: [] })
+                        }
                         className="p-2 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
                       >
                         <svg

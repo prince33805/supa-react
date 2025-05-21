@@ -6,8 +6,10 @@ import { Button } from './ui/button';
 
 export default function MobileMenuToggle({
   isLoggedIn,
+  role,
 }: {
   isLoggedIn: boolean;
+  role: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -66,7 +68,7 @@ export default function MobileMenuToggle({
               onClick={() => setOpen(false)}
               className={`block px-4 py-3 text-base font-semibold rounded transition-all duration-200
                 ${
-                  isLoggedIn
+                  isLoggedIn && role === 'admin'
                     ? 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400'
                     : 'pointer-events-none opacity-40 cursor-not-allowed'
                 }

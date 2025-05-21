@@ -59,6 +59,7 @@ export const getOrdersWithItems = async (
 
   const orders = (data || []).map((order) => ({
     ...order,
+    deleted_at: null,
     items: order.order_items ?? [],
   }));
 
