@@ -7,15 +7,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import { cuprod } from './actions';
 import ProductModal from '@/components/ProductModal';
 import { useFormToast } from '@/hooks/useFormToast';
-import { Database } from '@/types/supabase';
+// import { Database } from '@/types/supabase';
 
-type Product = Database['public']['Tables']['product']['Row'];
+// type Product = Database['public']['Tables']['product']['Row'];
 
 type currentProduct = {
-  id: string | null;
-  name: string | null;
-  price: number | null;
-  cost: number | null;
+  id: string;
+  name: string;
+  price: number;
+  cost: number;
   attachments: string | null;
   // add more fields as needed
 };
@@ -27,7 +27,7 @@ const initialState = {
 
 export default function ProductPage() {
   const supabase = createClient();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<currentProduct[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit' | 'view' | null>(null);
   const [currentProduct, setCurrentProduct] = useState<currentProduct | null>(
@@ -118,13 +118,13 @@ export default function ProductPage() {
     }
 
     // Optimistically update UI
-    setProducts(products.filter((p: Product) => p.id !== id));
+    setProducts(products.filter((p: currentProduct) => p.id !== id));
   };
 
   const productSupabaseQuery = () => {
     return supabase
       .from('product')
-      .select('*', { count: 'exact' })
+      .select('id,name,price,cost,attachments')
       .is('deleted_at', null)
       .order('created_at', { ascending: true });
   };
@@ -209,7 +209,7 @@ export default function ProductPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {products?.map((product: Product, index: number) => (
+                {products?.map((product: currentProduct, index: number) => (
                   <tr
                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                     key={product.id}
@@ -219,7 +219,7 @@ export default function ProductPage() {
                       {product.attachments && (
                         <img
                           src={product.attachments}
-                          alt={product.name ?? undefined}
+                          alt={product.name}
                           className="w-8 h-8 rounded-full object-cover"
                         />
                       )}

@@ -3,11 +3,18 @@
 import { useState, useEffect } from 'react';
 // import { Button } from '@/components/ui/button';
 import { getOrdersWithItems, getOrderItemsByDate } from '@/app/order/actions';
-import { Database } from '@/types/supabase';
+// import { Database } from '@/types/supabase';
 import OrderDetails from '@/components/OrderDetails';
+import { createClient } from '@/utils/supabase/client';
 // import OrderDetails from './OrderDetails';
+// type Orders = Database['public']['Tables']['orders']['Row'];
 
-type Orders = Database['public']['Tables']['orders']['Row'];
+type OrderItem = {
+  product_id: string;
+  quantity: number;
+  price: number;
+  total_price_product: number;
+};
 
 type OrdersWithItems = {
   created_at: string;
@@ -16,22 +23,40 @@ type OrdersWithItems = {
   id: string;
   payment_method: string | null;
   total_price: number;
-  items: [];
+  order_items: OrderItem[];
 };
 
 const pageSize = 10;
 
 export default function OrderTable() {
-  const [orders, setOrders] = useState<Orders[]>([]);
+  const [orders, setOrders] = useState<OrdersWithItems[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<OrdersWithItems | null>(
     null,
   );
+  const [productMap, setProductMap] = useState<{ [id: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [pageInput, setPageInput] = useState('1'); // input เป็น string
+  const [fromDateInput, setFromDateInput] = useState('');
+  const [toDateInput, setToDateInput] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      const { data: products } = await supabase
+        .from('product')
+        .select('id, name');
+      const map = Object.fromEntries(
+        (products || []).map((p) => [p.id, p.name]),
+      );
+      setProductMap(map);
+    };
+    loadProducts();
+  }, []);
 
   useEffect(() => {
     void fetchOrders();
@@ -49,6 +74,7 @@ export default function OrderTable() {
       fromDate,
       toDate,
     );
+    // console.log('orderData.orders', orderData.orders);
     setOrders(orderData.orders);
     setTotal(orderData.total);
     setLoading(false);
@@ -131,8 +157,8 @@ export default function OrderTable() {
                 <input
                   type="date"
                   id="from"
-                  value={fromDate}
-                  onChange={(e) => setFromDate(e.target.value)}
+                  value={fromDateInput}
+                  onChange={(e) => setFromDateInput(e.target.value)}
                   className="px-10 md:px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -147,11 +173,21 @@ export default function OrderTable() {
                 <input
                   type="date"
                   id="to"
-                  value={toDate}
-                  onChange={(e) => setToDate(e.target.value)}
+                  value={toDateInput}
+                  onChange={(e) => setToDateInput(e.target.value)}
                   className="px-10 md:px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+
+              <button
+                onClick={() => {
+                  setFromDate(fromDateInput);
+                  setToDate(toDateInput);
+                }}
+                className="bg-blue-600 text-white text-sm px-4 py-2 rounded shadow"
+              >
+                Apply Filter
+              </button>
             </div>
 
             {/* Export Button */}
@@ -168,7 +204,7 @@ export default function OrderTable() {
           </div>
 
           <div className="overflow-x-auto rounded-2xl shadow-md">
-            <table className="min-w-full text-left text-sm text-gray-600 dark:text-gray-300">
+            <table className="min-w-full text-left text-sm text-gray-600 dark:text-gray-300 border-spacing-y-4">
               <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-6 py-4">
@@ -180,6 +216,9 @@ export default function OrderTable() {
                   <th scope="col" className="px-4 py-4">
                     Payment Method
                   </th>
+                  <th scope="col" className="px-4 py-4">
+                    Status
+                  </th>
                   <th scope="col" className="px-6 py-4">
                     Created At
                   </th>
@@ -189,17 +228,15 @@ export default function OrderTable() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {orders?.map((order: Orders) => (
+                {orders?.map((order: OrdersWithItems) => (
                   <tr
                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                     key={order.id}
                   >
-                    {/* <td className="px-6 py-4">
-                      {total > 0 ? total - (page - 1) * pageSize - index : '-'}
-                    </td> */}
                     <td className="px-6 py-4">{order.id.slice(0, 8)}...</td>
                     <td className="px-6 py-4">{order.total_price}</td>
                     <td className="px-6 py-4">{order.payment_method}</td>
+                    <td className="px-6 py-4">{order.status}</td>
                     <td className="px-6 py-4">
                       {new Date(order.created_at ?? '').toLocaleString(
                         'en-GB',
@@ -214,12 +251,9 @@ export default function OrderTable() {
                         },
                       )}
                     </td>
-
                     <td className="py-4 flex justify-center gap-4">
                       <button
-                        onClick={() =>
-                          setSelectedOrder({ ...order, items: [] })
-                        }
+                        onClick={() => setSelectedOrder({ ...order })}
                         className="p-2 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
                       >
                         <svg
@@ -246,6 +280,16 @@ export default function OrderTable() {
                     </td>
                   </tr>
                 ))}
+                {/* Add empty rows to fill up to 10 */}
+                {Array.from({ length: Math.max(0, 10 - orders.length) }).map(
+                  (_, i) => (
+                    <tr key={`empty-${i}`} className="hover:bg-transparent">
+                      <td className="px-6 py-4" colSpan={6}>
+                        &nbsp;
+                      </td>
+                    </tr>
+                  ),
+                )}
               </tbody>
             </table>
 
@@ -253,6 +297,7 @@ export default function OrderTable() {
               <OrderDetails
                 order={selectedOrder}
                 onClose={() => setSelectedOrder(null)}
+                productMap={productMap} // 👈 ส่งเข้าไป
               />
             )}
           </div>

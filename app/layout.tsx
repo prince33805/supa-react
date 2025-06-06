@@ -67,6 +67,7 @@ export default async function RootLayout({
             </div>
           </main>
         </ThemeProvider>
+        <script type="text/javascript" src="https://cdn.omise.co/omise.js.gz"></script>
       </body>
     </html>
   );

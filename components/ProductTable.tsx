@@ -35,7 +35,7 @@ export default function ProductTable({ quantities, setQuantities }: Props) {
     setLoading(true);
     const { data, error } = await supabase
       .from('product')
-      .select('*')
+      .select('id,name,price,attachments')
       .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
@@ -77,7 +77,7 @@ export default function ProductTable({ quantities, setQuantities }: Props) {
                     alt={product.name ?? ''}
                     className="w-24 h-24 object-cover mb-4 rounded"
                   />
-                  <h2 className="text-lg font-semibold">{product.name}</h2>
+                  <h2 className="text-lg font-semibold break-all">{product.name}</h2>
                   <p className="text-gray-600 dark:text-gray-400">
                     ฿ {(product.price ?? 1).toFixed(2)}
                   </p>
