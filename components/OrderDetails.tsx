@@ -12,6 +12,8 @@ type OrderWithItems = {
   updated_at: string | null;
   id: string;
   payment_method: string | null;
+  status: string | null;
+  omise_charge_id: string | null;
   total_price: number;
   order_items: OrderItem[];
 };
@@ -57,6 +59,8 @@ export default function OrderDetails({ order, onClose, productMap }: Props) {
     );
     currentY += 20;
     doc.text(`Payment Method: ${order.payment_method}`, marginX, currentY);
+    currentY += 20;
+    doc.text(`Omise Charge Id: ${order.omise_charge_id}`, marginX, currentY);
     currentY += 20;
     doc.text(`Status: ${order.status}`, marginX, currentY);
     currentY += 30;
@@ -105,6 +109,7 @@ export default function OrderDetails({ order, onClose, productMap }: Props) {
         <p className="mb-2 text-sm">Order ID: {order.id}</p>
         <p className="mb-4 text-sm">Created: {order.created_at}</p>
         <p className="mb-4 text-sm">Payment Method: {order.payment_method}</p>
+        <p className="mb-4 text-sm">Omise Charge Id: {order.omise_charge_id}</p>
         <p className="mb-4 text-sm">Status: {order.status}</p>
 
         <table className="w-full text-sm mb-4">

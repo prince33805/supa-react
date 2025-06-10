@@ -1,3 +1,5 @@
 {
-    "deno.cacheOnSave": false
+    "deno.cacheOnSave": false,
+    "deno.enable": false,
+    "deno.importMap": "./supabase/functions/omise-webhook/import_map.json"
 }

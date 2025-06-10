@@ -6,6 +6,7 @@ import './globals.css';
 import NavBar from '@/components/NavBar';
 import { createClient } from '@/utils/supabase/server';
 import type { User } from '@supabase/supabase-js';
+import Script from 'next/script';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -67,7 +68,10 @@ export default async function RootLayout({
             </div>
           </main>
         </ThemeProvider>
-        <script type="text/javascript" src="https://cdn.omise.co/omise.js.gz"></script>
+        <Script
+          src="https://cdn.omise.co/omise.js.gz"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

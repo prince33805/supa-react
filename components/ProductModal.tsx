@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 // import { Database } from '@/types/supabase';
 
 // type Product = Database['public']['Tables']['product']['Row'];
@@ -82,24 +83,30 @@ export default function ProductModal({
           {/* Image Preview */}
           <div className="flex items-center gap-4 mb-6">
             {mode === 'view' && currentProduct.attachments && (
-              <img
+              <Image
                 src={currentProduct.attachments}
-                alt={currentProduct.name ?? undefined}
+                alt={currentProduct.name ?? ''}
+                width={240}
+                height={240}
                 className="w-16 h-16 rounded-full object-cover border"
               />
             )}
             {(mode === 'edit' || mode === 'create') && (
               <>
                 {previewImage ? (
-                  <img
+                  <Image
                     src={previewImage}
                     alt="Preview"
+                    width={240}
+                    height={240}
                     className="w-16 h-16 rounded-full object-cover border dark:border-gray-700"
                   />
                 ) : currentProduct.attachments ? (
-                  <img
+                  <Image
                     src={currentProduct.attachments}
-                    alt={currentProduct.name ?? undefined}
+                    alt={currentProduct.name ?? ''}
+                    width={240}
+                    height={240}
                     className="w-16 h-16 rounded-full object-cover border dark:border-gray-700"
                   />
                 ) : (

@@ -1,7 +1,6 @@
-import { serve } from 'https://deno.land/std/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   try {
     console.log('📥 Incoming request:', req.method, req.url);
 
@@ -11,6 +10,7 @@ serve(async (req) => {
     }
 
     const payload = await req.json();
+
     console.log('📦 Payload received:', JSON.stringify(payload));
 
     // ✅ ตรวจสอบและ log ENV

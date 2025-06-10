@@ -20,6 +20,8 @@ type OrderWithItems = {
   updated_at: string | null;
   deleted_at: string | null;
   payment_method: string | null;
+  status: string | null;
+  omise_charge_id: string | null;
   order_items: OrderItem[];
 };
 
@@ -42,6 +44,7 @@ export const getOrdersWithItems = async (
         total_price,
         payment_method,
         status,
+        omise_charge_id,
         created_at,
         updated_at,
         order_items (

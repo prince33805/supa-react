@@ -46,14 +46,14 @@ export default function PromptPayQR({
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [orderId, supabase]);
+  }, [orderId, supabase, onPaid]);
 
   return (
     <div className="text-center space-y-4 mt-6">
       <h3 className="text-lg font-bold">📱 Scan to Pay with PromptPay</h3>
 
       {qrImageUrl && (
-        <img
+        <Image
           src={qrImageUrl}
           alt="PromptPay QR"
           width={240}

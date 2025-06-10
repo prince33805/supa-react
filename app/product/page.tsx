@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState, useActionState } from 'react';
+import { useEffect, useState, useActionState, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { cuprod } from './actions';
 import ProductModal from '@/components/ProductModal';
 import { useFormToast } from '@/hooks/useFormToast';
+import Image from 'next/image';
 // import { Database } from '@/types/supabase';
 
 // type Product = Database['public']['Tables']['product']['Row'];
@@ -43,11 +44,6 @@ export default function ProductPage() {
   const [shouldShowError, setShouldShowError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // init
-  useEffect(() => {
-    void fetchProduct(); // Fetch products on initial render
-  }, []); // Empty dependency array to run only once when the component mounts
-
   useFormToast(formState, {
     onSuccess: () => {
       setIsOpen(false);
@@ -59,19 +55,6 @@ export default function ProductPage() {
       setShouldShowError(true);
     },
   });
-
-  // refresh dashboard // ^^ รวมได้หรือไม่
-  useEffect(() => {
-    if (shouldRefresh) {
-      fetchProduct()
-        .then(() => {
-          setShouldRefresh(false);
-        })
-        .catch((err) => {
-          console.error('Failed to fetch product:', err);
-        });
-    }
-  }, [shouldRefresh]);
 
   const handleOpen = (
     mode: 'create' | 'edit' | 'view',
@@ -121,15 +104,15 @@ export default function ProductPage() {
     setProducts(products.filter((p: currentProduct) => p.id !== id));
   };
 
-  const productSupabaseQuery = () => {
+  const productSupabaseQuery = useCallback(() => {
     return supabase
       .from('product')
       .select('id,name,price,cost,attachments')
       .is('deleted_at', null)
       .order('created_at', { ascending: true });
-  };
+  }, [supabase]);
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     setLoading(true);
     const { data: productData, error } = await productSupabaseQuery();
     if (!productData || error) {
@@ -137,7 +120,23 @@ export default function ProductPage() {
     }
     setProducts(productData);
     setLoading(false);
-  };
+  }, [productSupabaseQuery]);
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      fetchProduct()
+        .then(() => {
+          setShouldRefresh(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch product:', err);
+        });
+    }
+  }, [shouldRefresh, fetchProduct]);
+
+  useEffect(() => {
+    void fetchProduct();
+  }, [fetchProduct]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -217,9 +216,11 @@ export default function ProductPage() {
                     <td className="px-6 py-4">{index + 1}</td>
                     <td className="px-6 py-4 font-medium flex items-center gap-3">
                       {product.attachments && (
-                        <img
+                        <Image
                           src={product.attachments}
                           alt={product.name}
+                          width={240}
+                          height={240}
                           className="w-8 h-8 rounded-full object-cover"
                         />
                       )}

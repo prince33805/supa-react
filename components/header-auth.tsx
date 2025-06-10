@@ -52,7 +52,7 @@ export default async function AuthButton() {
     <div className="flex items-center w-full gap-4">
       {/* email center */}
       <div className="w-4/5 flex justify-center md:justify-end md:mr-4 ">
-        <div className="truncate text-center max-w-[8rem] md:max-w-[8rem]">
+        <div className="truncate text-center max-w-[8rem] md:max-w-[8rem] mr-2">
           Hey, {user.email}!
         </div>
       </div>

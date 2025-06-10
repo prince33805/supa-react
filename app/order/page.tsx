@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 // import { Button } from '@/components/ui/button';
 import { getOrdersWithItems, getOrderItemsByDate } from '@/app/order/actions';
 // import { Database } from '@/types/supabase';
@@ -22,11 +22,11 @@ type OrdersWithItems = {
   updated_at: string | null;
   id: string;
   payment_method: string | null;
+  status: string | null;
+  omise_charge_id: string | null;
   total_price: number;
   order_items: OrderItem[];
 };
-
-const pageSize = 10;
 
 export default function OrderTable() {
   const [orders, setOrders] = useState<OrdersWithItems[]>([]);
@@ -43,10 +43,9 @@ export default function OrderTable() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
 
-  const supabase = createClient();
-
   useEffect(() => {
     const loadProducts = async () => {
+      const supabase = createClient();
       const { data: products } = await supabase
         .from('product')
         .select('id, name');
@@ -59,14 +58,12 @@ export default function OrderTable() {
   }, []);
 
   useEffect(() => {
-    void fetchOrders();
-  }, [page, fromDate, toDate]);
-
-  useEffect(() => {
     setPageInput(String(page));
   }, [page]);
 
-  const fetchOrders = async () => {
+  const pageSize = 10;
+
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     const orderData = await getOrdersWithItems(
       page,
@@ -74,11 +71,14 @@ export default function OrderTable() {
       fromDate,
       toDate,
     );
-    // console.log('orderData.orders', orderData.orders);
     setOrders(orderData.orders);
     setTotal(orderData.total);
     setLoading(false);
-  };
+  }, [page, fromDate, toDate]);
+
+  useEffect(() => {
+    void fetchOrders();
+  }, [fetchOrders]);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize)); // ✅ ป้องกัน division by 0
 
@@ -284,7 +284,7 @@ export default function OrderTable() {
                 {Array.from({ length: Math.max(0, 10 - orders.length) }).map(
                   (_, i) => (
                     <tr key={`empty-${i}`} className="hover:bg-transparent">
-                      <td className="px-6 py-4" colSpan={6}>
+                      <td className="px-6 py-[24px] md:py-[26px]" colSpan={6}>
                         &nbsp;
                       </td>
                     </tr>
