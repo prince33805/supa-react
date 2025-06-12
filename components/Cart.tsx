@@ -134,6 +134,7 @@ export default function Cart({ onOrderSubmitted }: Props) {
     } else if (paymentMethod === 'cash') {
       alert('order submitted !!!'); // เปิด QR Modal
     }
+    setPaymentMethod('cash')
     clearCart();
     onOrderSubmitted();
   };

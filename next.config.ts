@@ -5,7 +5,9 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ['api.omise.co','ulfpbrucgvvlqpxhlsjh.supabase.co'],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none';",
+    domains: ['api.omise.co', 'ulfpbrucgvvlqpxhlsjh.supabase.co'],
   },
 };
 

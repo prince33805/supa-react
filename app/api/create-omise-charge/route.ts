@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const { amount } = await req.json();
+  console.log("process.env.OMISE_SECRET_KEY",process.env.OMISE_SECRET_KEY)
 
   const res = await fetch('https://api.omise.co/charges', {
     method: 'POST',

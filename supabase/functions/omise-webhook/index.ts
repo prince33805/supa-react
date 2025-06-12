@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 Deno.serve(async (req) => {
   try {
@@ -55,31 +55,27 @@ Deno.serve(async (req) => {
 
     // ✅ เงื่อนไขกรณีพิเศษ
     if (
-      payload.key === 'charge.complete' &&
-      payload.data?.status === 'successful'
+      payload.key === 'charge.complete'
+      // payload.data?.status === 'successful'
     ) {
       const chargeId = payload.data.id;
-      console.log('💰 Charge complete detected:', chargeId);
+      const chargeStatus = payload.data?.status;
 
-      // const { data: orderData, error: orderError } = await supabase
-      //   .from('orders')
-      //   .select('*')
-      //   .eq('omise_charge_id', chargeId)
-      //   .single(); // ⬅️ ดึง row เดียว ถ้ามั่นใจว่ามีแค่ 1
+      console.log(
+        `💬 Charge complete detected: ${chargeId} with status ${chargeStatus}`,
+      );
 
-      // if (orderError) {
-      //   console.error(
-      //     '❌ Failed to select order:',
-      //     orderError.message,
-      //     orderError,
-      //   );
-      // } else {
-      //   console.log('✅ Order found:', orderData);
-      // }
+      if (!chargeId || !chargeStatus) {
+        console.error('❌ Missing chargeId or status in payload');
+        return new Response(JSON.stringify({ error: 'Invalid payload' }), {
+          status: 400,
+        });
+      }
 
+      // อัปเดตสถานะคำสั่งซื้อในฐานข้อมูล
       const { data: updateData, error: updateError } = await supabase
         .from('orders')
-        .update({ status: 'paid' })
+        .update({ status: chargeStatus === 'successful' ? 'paid' : 'failed' })
         .eq('omise_charge_id', chargeId);
 
       console.log('[Debug] updateData:', updateData);
