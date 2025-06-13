@@ -14,7 +14,7 @@ import { useState } from 'react';
 export default function OrderTable() {
   // const [orders, setOrders] = useState<Orders[]>([]);
   // const [selectedOrder, setSelectedOrder] = useState<Orders | null>(null);
-  const [loading] = useState(true);
+  const [loading] = useState(false);
   // const [page, setPage] = useState(1);
   // const [total, setTotal] = useState(0);
   // const [pageInput, setPageInput] = useState('1'); // input เป็น string

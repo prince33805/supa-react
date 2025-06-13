@@ -6,18 +6,20 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 // type Orders = Database['public']['Tables']['orders']['Row'];
-type Orders = {
+type OrderWithItems = {
   created_at: string;
   deleted_at: string | null;
+  updated_at: string | null;
   id: string;
   payment_method: string | null;
+  status: string | null;
+  omise_charge_id: string | null;
   total_price: number;
-  updated_at: string | null;
-  items: [];
+  order_items: OrderItem[];
 };
 
-type OrderItems = {
-  product: { name: string };
+type OrderItem = {
+  product_id: string;
   quantity: number;
   price: number;
   total_price_product: number;
@@ -30,11 +32,12 @@ interface jsPDFWithAutoTable extends jsPDF {
 }
 
 interface Props {
-  order: Orders;
+  order: OrderWithItems;
   onClose: () => void;
+  productMap: { [id: string]: string }; // 👈 เพิ่มตรงนี้
 }
 
-export default function OrderDetails({ order, onClose }: Props) {
+export default function OrderDetails({ order, onClose, productMap }: Props) {
   const handleDownloadPDF = () => {
     const doc = new jsPDF({ unit: 'pt', format: 'a4' }) as jsPDFWithAutoTable;
 
@@ -56,13 +59,17 @@ export default function OrderDetails({ order, onClose }: Props) {
     );
     currentY += 20;
     doc.text(`Payment Method: ${order.payment_method}`, marginX, currentY);
+    currentY += 20;
+    doc.text(`Omise Charge Id: ${order.omise_charge_id}`, marginX, currentY);
+    currentY += 20;
+    doc.text(`Status: ${order.status}`, marginX, currentY);
     currentY += 30;
 
     // 📋 Order Table
-    const tableBody = (order.items as OrderItems[]).map(
-      (item: OrderItems, i: number) => [
+    const tableBody = (order.order_items as OrderItem[]).map(
+      (item: OrderItem, i: number) => [
         i + 1,
-        item.product.name,
+        productMap[item.product_id] || 'Unknown',
         item.quantity,
         `$${item.price.toFixed(2)}`,
         `$${item.total_price_product.toFixed(2)}`,
@@ -93,6 +100,8 @@ export default function OrderDetails({ order, onClose }: Props) {
     doc.save(`invoice-${order.id}.pdf`);
   };
 
+  // console.log('order', order);
+
   return (
     <div className="fixed inset-0 dark:bg-black/60 bg-black bg-opacity-40 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-2xl shadow-lg relative">
@@ -100,6 +109,8 @@ export default function OrderDetails({ order, onClose }: Props) {
         <p className="mb-2 text-sm">Order ID: {order.id}</p>
         <p className="mb-4 text-sm">Created: {order.created_at}</p>
         <p className="mb-4 text-sm">Payment Method: {order.payment_method}</p>
+        <p className="mb-4 text-sm">Omise Charge Id: {order.omise_charge_id}</p>
+        <p className="mb-4 text-sm">Status: {order.status}</p>
 
         <table className="w-full text-sm mb-4">
           <thead>
@@ -111,10 +122,12 @@ export default function OrderDetails({ order, onClose }: Props) {
             </tr>
           </thead>
           <tbody>
-            {(order.items as OrderItems[]).map(
-              (item: OrderItems, i: number) => (
+            {(order.order_items as OrderItem[]).map(
+              (item: OrderItem, i: number) => (
                 <tr key={i} className="border-t">
-                  <td className="py-2">{item.product?.name || 'Unknown'}</td>
+                  <td className="py-2">
+                    {productMap[item.product_id] || 'Unknown'}
+                  </td>
                   <td className="py-2">{item.quantity}</td>
                   <td className="py-2">${item.price}</td>
                   <td className="py-2">${item.total_price_product}</td>

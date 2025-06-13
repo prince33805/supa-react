@@ -1,32 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Database } from '@/types/supabase';
+// import { Database } from '@/types/supabase';
 
-type Product = Database['public']['Tables']['product']['Row'];
+// type Product = Database['public']['Tables']['product']['Row'];
+
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  cost: number;
+  attachments: string | null;
+};
 
 export default function ProductList() {
   const supabase = createClient();
   const [products, setProducts] = useState<Product[]>([]);
 
-  const productSupabaseQuery = () => {
-    const query = supabase.from('product').select('*');
-    console.log(query);
+  const productSupabaseQuery = useCallback(() => {
+    const query = supabase
+      .from('product')
+      .select('id,name,price,cost,attachments')
+      .is('deleted_at', null)
+      .order('created_at', { ascending: true });
+    // console.log(query);
     return query;
-  };
+  }, [supabase]);
 
-  const fetchProduct = async () => {
-    const { data: usersData, error } = await productSupabaseQuery();
-    if (!usersData || error) {
+  const fetchProduct = useCallback(async () => {
+    const { data: product, error } = await productSupabaseQuery();
+    if (!product || error) {
       return false;
     }
-    setProducts(usersData);
-  };
+    setProducts(product);
+  }, [productSupabaseQuery]);
 
   useEffect(() => {
     void fetchProduct();
-  }, []);
+  }, [fetchProduct]);
 
   return (
     // opacity-0

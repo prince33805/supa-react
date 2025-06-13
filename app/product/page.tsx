@@ -1,21 +1,22 @@
 'use client';
 
-import { useEffect, useState, useActionState } from 'react';
+import { useEffect, useState, useActionState, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { cuprod } from './actions';
 import ProductModal from '@/components/ProductModal';
 import { useFormToast } from '@/hooks/useFormToast';
-import { Database } from '@/types/supabase';
+import Image from 'next/image';
+// import { Database } from '@/types/supabase';
 
-type Product = Database['public']['Tables']['product']['Row'];
+// type Product = Database['public']['Tables']['product']['Row'];
 
 type currentProduct = {
-  id: string | null;
-  name: string | null;
-  price: number | null;
-  cost: number | null;
+  id: string;
+  name: string;
+  price: number;
+  cost: number;
   attachments: string | null;
   // add more fields as needed
 };
@@ -27,7 +28,7 @@ const initialState = {
 
 export default function ProductPage() {
   const supabase = createClient();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<currentProduct[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit' | 'view' | null>(null);
   const [currentProduct, setCurrentProduct] = useState<currentProduct | null>(
@@ -43,11 +44,6 @@ export default function ProductPage() {
   const [shouldShowError, setShouldShowError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // init
-  useEffect(() => {
-    void fetchProduct(); // Fetch products on initial render
-  }, []); // Empty dependency array to run only once when the component mounts
-
   useFormToast(formState, {
     onSuccess: () => {
       setIsOpen(false);
@@ -59,19 +55,6 @@ export default function ProductPage() {
       setShouldShowError(true);
     },
   });
-
-  // refresh dashboard // ^^ รวมได้หรือไม่
-  useEffect(() => {
-    if (shouldRefresh) {
-      fetchProduct()
-        .then(() => {
-          setShouldRefresh(false);
-        })
-        .catch((err) => {
-          console.error('Failed to fetch product:', err);
-        });
-    }
-  }, [shouldRefresh]);
 
   const handleOpen = (
     mode: 'create' | 'edit' | 'view',
@@ -118,18 +101,18 @@ export default function ProductPage() {
     }
 
     // Optimistically update UI
-    setProducts(products.filter((p: Product) => p.id !== id));
+    setProducts(products.filter((p: currentProduct) => p.id !== id));
   };
 
-  const productSupabaseQuery = () => {
+  const productSupabaseQuery = useCallback(() => {
     return supabase
       .from('product')
-      .select('*', { count: 'exact' })
+      .select('id,name,price,cost,attachments')
       .is('deleted_at', null)
       .order('created_at', { ascending: true });
-  };
+  }, [supabase]);
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     setLoading(true);
     const { data: productData, error } = await productSupabaseQuery();
     if (!productData || error) {
@@ -137,7 +120,23 @@ export default function ProductPage() {
     }
     setProducts(productData);
     setLoading(false);
-  };
+  }, [productSupabaseQuery]);
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      fetchProduct()
+        .then(() => {
+          setShouldRefresh(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch product:', err);
+        });
+    }
+  }, [shouldRefresh, fetchProduct]);
+
+  useEffect(() => {
+    void fetchProduct();
+  }, [fetchProduct]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -209,7 +208,7 @@ export default function ProductPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {products?.map((product: Product, index: number) => (
+                {products?.map((product: currentProduct, index: number) => (
                   <tr
                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                     key={product.id}
@@ -217,9 +216,11 @@ export default function ProductPage() {
                     <td className="px-6 py-4">{index + 1}</td>
                     <td className="px-6 py-4 font-medium flex items-center gap-3">
                       {product.attachments && (
-                        <img
+                        <Image
                           src={product.attachments}
-                          alt={product.name ?? undefined}
+                          alt={product.name}
+                          width={240}
+                          height={240}
                           className="w-8 h-8 rounded-full object-cover"
                         />
                       )}
