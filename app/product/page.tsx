@@ -178,7 +178,10 @@ export default function ProductPage() {
           <div className="mb-4 flex justify-end">
             <button
               onClick={() => handleOpen('create')}
-              className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 text-sm"
+              disabled={products.length > 8}
+              className={`px-4 py-2 rounded-md text-white text-sm transition 
+                  ${products.length > 8 ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-green-600 hover:bg-green-700'}`}
             >
               + Create Product
             </button>

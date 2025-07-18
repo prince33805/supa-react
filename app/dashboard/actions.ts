@@ -1,55 +1,63 @@
-// 'use server';
+'use server';
 
-// import { createClient } from '@/utils/supabase/server';
-// import { Database } from '@/types/supabase';
+import { createClient } from '@/utils/supabase/server';
 
-// type Orders = Database['public']['Tables']['orders']['Row'];
+export async function getProductSalesGroupedByProductId() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('get_paid_product_sales');
+  if (error) {
+    console.error('Supabase RPC error:', error);
+    return [];
+  }
+  return data;
+}
 
-// export const getOrdersWithItems = async (
-//   page: number,
-//   pageSize: number,
-// ): Promise<{ orders: Orders[]; total: number }> => {
-//   const supabase = await createClient();
+export async function getPaidSummaryByMethod() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('get_paid_summary_by_method');
+  if (error) {
+    console.error('Supabase RPC error:', error);
+    return [];
+  }
+  return data;
+}
 
-//   const from = (page - 1) * pageSize;
-//   const to = from + pageSize - 1;
+export async function getTopProductSalesWithRest() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('get_top_product_sales_with_rest');
+  if (error) {
+    console.error('Supabase RPC error:', error);
+    return [];
+  }
+  return data;
+}
 
-//   let query = supabase
-//     .from('orders')
-//     .select(
-//       `
-//             id,
-//             total_price,
-//             created_at,
-//             updated_at,
-//             payment_method,
-//             order_items (
-//                 product_id,
-//                 quantity,
-//                 price,
-//                 total_price_product,
-//                 product:product_id (
-//                     id,
-//                     name
-//                 )
-//             )
-//         `,
-//       { count: 'exact' },
-//     )
-//     .order('created_at', { ascending: false })
-//     .range(from, to);
+export async function getProductProfits() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('get_product_profits');
+  if (error) {
+    console.error('Supabase RPC error:', error);
+    return [];
+  }
+  return data;
+}
 
-//   const { data, count, error } = await query;
+export async function getTopProductProfitsRest() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('get_top_product_profits_with_rest');
+  if (error) {
+    console.error('Supabase RPC error:', error);
+    return [];
+  }
+  return data;
+}
 
-//   if (error) {
-//     console.error('Error fetching orders:', error.message);
-//     return { orders: [], total: 0 };
-//   }
-
-//   const orders = (data || []).map((order) => ({
-//     ...order,
-//     items: order.order_items ?? [],
-//   }));
-
-//   return { orders, total: count ?? 0 };
-// };
+export async function getTop5MonthlySalesCompare() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('get_top5_monthly_sales_compare');
+  if (error) {
+    console.error('Supabase RPC error:', error);
+    return [];
+  }
+  return data;
+}

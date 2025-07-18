@@ -87,7 +87,8 @@ export default function OrderDetails({ order, onClose, productMap }: Props) {
     });
 
     // 💰 Total
-    const afterTableY = doc.lastAutoTable?.finalY ?? +20;
+    const afterTableY = (doc.lastAutoTable?.finalY || currentY) + 30;
+    console.log("afterTableY",afterTableY)
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text(
