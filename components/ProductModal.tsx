@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 // import { Database } from '@/types/supabase';
 
@@ -48,6 +48,8 @@ export default function ProductModal({
   onImageChange,
   shouldShowError,
 }: ProductModalProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   if (!isOpen || !currentProduct || !mode) return null;
 
   return (
@@ -73,6 +75,8 @@ export default function ProductModal({
 
             const confirmed = window.confirm(message);
             if (!confirmed) e.preventDefault();
+
+            setIsSubmitting(true);
           }}
         >
           <input type="hidden" name="mode" value={mode} />
@@ -191,9 +195,35 @@ export default function ProductModal({
             {mode !== 'view' && (
               <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium bg-green-600 text-white hover:bg-green-700 rounded-lg"
+                className="px-4 py-2 text-sm font-medium bg-green-600 text-white hover:bg-green-700 rounded-lg flex items-center gap-2"
               >
-                Save
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="w-4 h-4 animate-spin text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+                      ></path>
+                    </svg>
+                    กำลังบันทึก...
+                  </>
+                ) : (
+                  'Save'
+                )}
               </button>
             )}
             <button
